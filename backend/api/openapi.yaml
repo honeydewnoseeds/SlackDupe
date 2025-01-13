@@ -1,0 +1,190 @@
+#
+# CSE186 Assignment 8 Backend
+#
+
+openapi: '3.0.3'
+
+info:
+  description: CSE186 Assignment 8 Backend
+  version: 0.1.0
+  title: CSE186 Assignment 8 Backend
+
+servers:
+  - url: http://localhost:3010/v0
+
+paths:
+  /login:
+    post:
+      description: User Login
+      requestBody:
+        description: Request Body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        200:
+          description: Succesful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: User Not Found
+
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /workspace/{id}:
+    get:
+      description: Get user workspaces
+      parameters:
+      - name: id
+        in: path
+        description: user id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Get Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspaces'
+  /workspace/{id}/channels:
+    get:
+      description: Get workspace channels
+      parameters:
+      - name: id
+        in: path
+        description: workspace id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Get Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channels'
+  /channel/{id}:
+    get:
+      description: Get channel messages
+      parameters:
+      - name: id
+        in: path
+        description: channel id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Get Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Messages'
+
+components:
+  schemas:
+    Error:
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+      required:
+        - code
+        - message
+
+    Credentials:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        accessToken:
+          type: string
+        id:
+          type: string
+      required:
+        - name
+        - accessToken
+        - id
+    
+    Userid:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    
+    Workspaces:
+      type: object
+      properties:
+        workspaces:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Data'
+      required:
+        - workspaces
+    
+    Channels:
+      type: object
+      properties:
+        channels:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Data'
+      required:
+        - channels
+    
+    Data:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+      required:
+        - name
+        - id
+    
+    Messages:
+      type: object
+      properties:
+        messages:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+              id:
+                type: string
+            required:
+              - message
+              - id
+      required:
+        - messages
